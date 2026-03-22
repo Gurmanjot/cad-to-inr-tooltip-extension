@@ -1,10 +1,13 @@
 {
   "manifest_version": 3,
   "name": "Price in INR",
-  "version": "3.0",
-  "description": "Hover over any CAD price to instantly see the INR equivalent.",
-  "permissions": [],
+  "version": "4.0",
+  "description": "Hover over any price to instantly see the INR equivalent with configurable tax.",
+  "permissions": ["storage"],
   "host_permissions": ["https://open.er-api.com/*"],
+  "action": {
+    "default_popup": "popup.html"
+  },
   "content_scripts": [
     {
       "matches": ["<all_urls>"],

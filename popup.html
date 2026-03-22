@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="popup-header">
+    <span class="popup-flag">🇮🇳</span>
+    <span class="popup-title">Price in INR</span>
+  </div>
+
+  <label class="field-label" for="defaultCurrency">Default currency for <code>$</code></label>
+  <select id="defaultCurrency">
+    <option value="CAD">CAD — Canadian Dollar</option>
+    <option value="USD">USD — US Dollar</option>
+    <option value="AUD">AUD — Australian Dollar</option>
+  </select>
+
+  <label class="field-label" for="region">Region (for tax)</label>
+  <select id="region">
+    <option value="">— Select region —</option>
+
+    <optgroup label="Canadian Provinces &amp; Territories">
+      <option value="CA-AB">Alberta</option>
+      <option value="CA-BC">British Columbia</option>
+      <option value="CA-MB">Manitoba</option>
+      <option value="CA-NB">New Brunswick</option>
+      <option value="CA-NL">Newfoundland &amp; Labrador</option>
+      <option value="CA-NS">Nova Scotia</option>
+      <option value="CA-NT">Northwest Territories</option>
+      <option value="CA-NU">Nunavut</option>
+      <option value="CA-ON">Ontario</option>
+      <option value="CA-PE">Prince Edward Island</option>
+      <option value="CA-QC">Quebec</option>
+      <option value="CA-SK">Saskatchewan</option>
+      <option value="CA-YT">Yukon</option>
+    </optgroup>
+
+    <optgroup label="US States">
+      <option value="US-AL">Alabama</option>
+      <option value="US-AK">Alaska</option>
+      <option value="US-AZ">Arizona</option>
+      <option value="US-AR">Arkansas</option>
+      <option value="US-CA">California</option>
+      <option value="US-CO">Colorado</option>
+      <option value="US-CT">Connecticut</option>
+      <option value="US-DE">Delaware</option>
+      <option value="US-DC">District of Columbia</option>
+      <option value="US-FL">Florida</option>
+      <option value="US-GA">Georgia</option>
+      <option value="US-HI">Hawaii</option>
+      <option value="US-ID">Idaho</option>
+      <option value="US-IL">Illinois</option>
+      <option value="US-IN">Indiana</option>
+      <option value="US-IA">Iowa</option>
+      <option value="US-KS">Kansas</option>
+      <option value="US-KY">Kentucky</option>
+      <option value="US-LA">Louisiana</option>
+      <option value="US-ME">Maine</option>
+      <option value="US-MD">Maryland</option>
+      <option value="US-MA">Massachusetts</option>
+      <option value="US-MI">Michigan</option>
+      <option value="US-MN">Minnesota</option>
+      <option value="US-MS">Mississippi</option>
+      <option value="US-MO">Missouri</option>
+      <option value="US-MT">Montana</option>
+      <option value="US-NE">Nebraska</option>
+      <option value="US-NV">Nevada</option>
+      <option value="US-NH">New Hampshire</option>
+      <option value="US-NJ">New Jersey</option>
+      <option value="US-NM">New Mexico</option>
+      <option value="US-NY">New York</option>
+      <option value="US-NC">North Carolina</option>
+      <option value="US-ND">North Dakota</option>
+      <option value="US-OH">Ohio</option>
+      <option value="US-OK">Oklahoma</option>
+      <option value="US-OR">Oregon</option>
+      <option value="US-PA">Pennsylvania</option>
+      <option value="US-RI">Rhode Island</option>
+      <option value="US-SC">South Carolina</option>
+      <option value="US-SD">South Dakota</option>
+      <option value="US-TN">Tennessee</option>
+      <option value="US-TX">Texas</option>
+      <option value="US-UT">Utah</option>
+      <option value="US-VT">Vermont</option>
+      <option value="US-VA">Virginia</option>
+      <option value="US-WA">Washington</option>
+      <option value="US-WV">West Virginia</option>
+      <option value="US-WI">Wisconsin</option>
+      <option value="US-WY">Wyoming</option>
+    </optgroup>
+  </select>
+
+  <label class="field-label" for="taxRate">Tax rate (%)</label>
+  <div class="tax-row">
+    <input id="taxRate" type="number" min="0" max="100" step="0.001" placeholder="0">
+    <span class="tax-percent">%</span>
+  </div>
+
+  <div class="saved-msg" id="savedMsg">Settings saved</div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

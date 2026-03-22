@@ -1,17 +1,39 @@
 /**
  * Price in INR — Content Script
- * Detects CAD prices and shows INR equivalent on hover.
- * All "$" amounts are treated as CAD.
+ * Detects prices in multiple currencies and shows INR equivalent on hover.
+ * Bare "$" defaults to a user-configurable currency (CAD by default).
  */
 
-// ── Ontario HST ────────────────────────────────────────────────────
-const HST_RATE = 0.13;
+// ── Settings (loaded from chrome.storage.sync) ─────────────────────
+let defaultCurrency = 'CAD';
+let taxRate = 0.13;
 
-// ── Currency config ────────────────────────────────────────────────
+chrome.storage.sync.get({ defaultCurrency: 'CAD', taxRate: 13 }, (s) => {
+  defaultCurrency = s.defaultCurrency;
+  taxRate = s.taxRate / 100;
+});
+
+chrome.storage.onChanged.addListener((changes) => {
+  if (changes.defaultCurrency) defaultCurrency = changes.defaultCurrency.newValue;
+  if (changes.taxRate)         taxRate = changes.taxRate.newValue / 100;
+});
+
+// ── Currency patterns ──────────────────────────────────────────────
+// Explicit prefixes are matched first; bare "$" falls through to the
+// configurable default at the bottom of the list.
 const CURRENCY_PATTERNS = [
   { regex: /\b(CA\$|CAD\s*\$?|C\$)\s*([\d,]+(?:\.\d{1,2})?)/gi,  code: 'CAD' },
   { regex: /\bCAD\s+([\d,]+(?:\.\d{1,2})?)/gi,                    code: 'CAD', singleGroup: true },
-  { regex: /(?<!\w)\$\s*([\d,]+(?:\.\d{1,2})?)/g,                 code: 'CAD', singleGroup: true },
+  { regex: /\b(US\$|USD\s*\$?)\s*([\d,]+(?:\.\d{1,2})?)/gi,       code: 'USD' },
+  { regex: /\bUSD\s+([\d,]+(?:\.\d{1,2})?)/gi,                     code: 'USD', singleGroup: true },
+  { regex: /\b(A\$|AUD\s*\$?)\s*([\d,]+(?:\.\d{1,2})?)/gi,        code: 'AUD' },
+  { regex: /\bAUD\s+([\d,]+(?:\.\d{1,2})?)/gi,                     code: 'AUD', singleGroup: true },
+  { regex: /€\s*([\d,]+(?:\.\d{1,2})?)/g,                          code: 'EUR', singleGroup: true },
+  { regex: /\bEUR\s+([\d,]+(?:\.\d{1,2})?)/gi,                     code: 'EUR', singleGroup: true },
+  { regex: /£\s*([\d,]+(?:\.\d{1,2})?)/g,                          code: 'GBP', singleGroup: true },
+  { regex: /\bGBP\s+([\d,]+(?:\.\d{1,2})?)/gi,                     code: 'GBP', singleGroup: true },
+  // Bare "$" — uses the user's chosen default currency
+  { regex: /(?<!\w)\$\s*([\d,]+(?:\.\d{1,2})?)/g,                  code: null,  singleGroup: true },
 ];
 
 // ── Exchange-rate cache ────────────────────────────────────────────
@@ -81,7 +103,10 @@ function extractPrice(text) {
       amount = parseFloat(m[2].replace(/,/g, ''));
     }
 
-    if (!isNaN(amount)) return { code: 'CAD', amount };
+    if (!isNaN(amount)) {
+      const code = cfg.code || defaultCurrency;
+      return { code, amount };
+    }
   }
   return null;
 }
@@ -102,8 +127,10 @@ document.addEventListener('mouseover', async (e) => {
   if (!rate) return;
 
   const inr   = found.amount * rate;
-  const tax   = found.amount * HST_RATE * rate;
+  const tax   = found.amount * taxRate * rate;
   const total = inr + tax;
+  const rawPct = taxRate * 100;
+  const taxPct = rawPct % 1 === 0 ? rawPct.toFixed(0) : rawPct.toFixed(3).replace(/0+$/, '');
 
   const fmt = (v) => new Intl.NumberFormat('en-IN', {
     style: 'currency', currency: 'INR', maximumFractionDigits: 0
@@ -112,10 +139,10 @@ document.addEventListener('mouseover', async (e) => {
   showTooltip(e.clientX, e.clientY,
     `<span class="inr-flag">🇮🇳</span>
      <span class="inr-amount">${fmt(inr)}</span>
-     <span class="inr-tax">+ HST 13%: ${fmt(tax)}</span>
+     <span class="inr-tax">+ Tax ${taxPct}%: ${fmt(tax)}</span>
      <span class="inr-divider"></span>
      <span class="inr-total">Total: ${fmt(total)}</span>
-     <span class="inr-rate">1 CAD ≈ ₹${rate.toFixed(2)}</span>`
+     <span class="inr-rate">1 ${found.code} ≈ ₹${rate.toFixed(2)}</span>`
   );
 });
 
