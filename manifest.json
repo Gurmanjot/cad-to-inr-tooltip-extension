@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Price in INR",
-  "version": "4.0",
+  "version": "5.0",
   "description": "Hover over any price to instantly see the INR equivalent with configurable tax.",
   "permissions": ["storage"],
   "host_permissions": ["https://open.er-api.com/*"],
